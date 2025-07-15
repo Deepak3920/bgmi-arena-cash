@@ -3,6 +3,20 @@ import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 
+interface UserProfile {
+  id: string
+  username: string
+  email: string
+  in_game_name: string
+  level: number
+  wins: number
+  total_matches: number
+  earnings: number
+  avatar_url?: string
+  created_at: string
+  updated_at: string
+}
+
 interface AuthContextType {
   user: User | null
   session: Session | null
@@ -12,7 +26,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
-  updateProfile: (updates: Partial<any>) => Promise<void>
+  updateProfile: (updates: Partial<UserProfile>) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -28,7 +42,7 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
-  const [profile, setProfile] = useState<any | null>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const { toast } = useToast()
 
@@ -63,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const loadUserProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('profiles' as any)
         .select('*')
         .eq('id', userId)
         .single()
@@ -74,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data) {
-        setProfile(data)
+        setProfile(data as unknown as UserProfile)
       }
     } catch (error) {
       console.error('Error loading profile:', error)
@@ -100,7 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user) {
         // Create profile
         const { error: profileError } = await supabase
-          .from('profiles')
+          .from('profiles' as any)
           .insert([
             {
               id: data.user.id,
@@ -206,12 +220,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const updateProfile = async (updates: Partial<any>) => {
+  const updateProfile = async (updates: Partial<UserProfile>) => {
     try {
       if (!user) throw new Error('No user logged in')
 
       const { error } = await supabase
-        .from('profiles')
+        .from('profiles' as any)
         .update(updates)
         .eq('id', user.id)
 
