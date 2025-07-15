@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean
   signUp: (email: string, password: string, username: string, inGameName: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>
 }
@@ -160,6 +161,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
+  const signInWithGoogle = async () => {
+    try {
+      setLoading(true)
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      })
+
+      if (error) throw error
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      })
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut()
@@ -216,6 +240,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     signUp,
     signIn,
+    signInWithGoogle,
     signOut,
     updateProfile,
   }
