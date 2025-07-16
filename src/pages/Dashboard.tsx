@@ -4,12 +4,14 @@ import { supabase, Tournament } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
 import Navbar from '@/components/layout/Navbar'
 import TournamentCard from '@/components/tournaments/TournamentCard'
+import TournamentAssistant from '@/components/ai/TournamentAssistant'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Search, Filter, Trophy, Zap, Clock, TrendingUp } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Search, Filter, Trophy, Zap, Clock, TrendingUp, Bot } from 'lucide-react'
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth()
@@ -212,7 +214,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filters and AI Assistant */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -244,6 +246,26 @@ const Dashboard = () => {
               <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="w-full md:w-auto bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20 hover:from-primary/20 hover:to-secondary/20"
+              >
+                <Bot className="h-4 w-4 mr-2" />
+                AI Assistant
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Bot className="h-5 w-5 text-primary" />
+                  BGMI Tournament Assistant
+                </DialogTitle>
+              </DialogHeader>
+              <TournamentAssistant />
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Tournament Tabs */}
