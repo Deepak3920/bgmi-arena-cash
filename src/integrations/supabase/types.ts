@@ -56,6 +56,95 @@ export type Database = {
         }
         Relationships: []
       }
+      tournament_registrations: {
+        Row: {
+          id: string
+          payment_status: string
+          registered_at: string
+          team_members: string[] | null
+          team_name: string | null
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          payment_status?: string
+          registered_at?: string
+          team_members?: string[] | null
+          team_name?: string | null
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          payment_status?: string
+          registered_at?: string
+          team_members?: string[] | null
+          team_name?: string | null
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_registrations_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          created_at: string
+          current_players: number
+          description: string | null
+          entry_fee: number
+          id: string
+          map: string | null
+          max_players: number
+          organizer_id: string
+          prize_pool: number
+          rules: string | null
+          start_date: string
+          status: string
+          title: string
+          tournament_type: string
+        }
+        Insert: {
+          created_at?: string
+          current_players?: number
+          description?: string | null
+          entry_fee?: number
+          id?: string
+          map?: string | null
+          max_players: number
+          organizer_id: string
+          prize_pool?: number
+          rules?: string | null
+          start_date: string
+          status?: string
+          title: string
+          tournament_type?: string
+        }
+        Update: {
+          created_at?: string
+          current_players?: number
+          description?: string | null
+          entry_fee?: number
+          id?: string
+          map?: string | null
+          max_players?: number
+          organizer_id?: string
+          prize_pool?: number
+          rules?: string | null
+          start_date?: string
+          status?: string
+          title?: string
+          tournament_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

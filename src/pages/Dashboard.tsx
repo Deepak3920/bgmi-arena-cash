@@ -122,7 +122,7 @@ const Dashboard = () => {
   const filteredTournaments = tournaments
     .filter(tournament => {
       const matchesSearch = tournament.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           tournament.description.toLowerCase().includes(searchTerm.toLowerCase())
+                           (tournament.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
       const matchesStatus = filterStatus === 'all' || tournament.status === filterStatus
       return matchesSearch && matchesStatus
     })
