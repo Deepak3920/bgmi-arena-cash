@@ -52,7 +52,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2">
-          {tournament.description}
+          {tournament.description || 'No description available'}
         </p>
       </CardHeader>
 
@@ -79,7 +79,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
           <div className="flex items-center gap-2 text-sm">
             <MapPin className="h-4 w-4 text-accent" />
             <span className="text-muted-foreground">Map:</span>
-            <span className="font-medium">{tournament.map}</span>
+            <span className="font-medium">{tournament.map || 'TBD'}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <Clock className="h-4 w-4 text-muted-foreground" />

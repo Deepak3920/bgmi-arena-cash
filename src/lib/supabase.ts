@@ -9,7 +9,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export interface Tournament {
   id: string
   title: string
-  description: string
+  description: string | null
   entry_fee: number
   prize_pool: number
   max_players: number
@@ -19,8 +19,8 @@ export interface Tournament {
   organizer_id: string
   created_at: string
   tournament_type: 'solo' | 'duo' | 'squad'
-  map: string
-  rules: string
+  map: string | null
+  rules: string | null
 }
 
 export interface UserProfile {
