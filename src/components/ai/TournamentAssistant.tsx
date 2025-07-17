@@ -35,7 +35,7 @@ const TournamentAssistant: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hi! I'm your BGMI tournament assistant with full platform access. I can help you:\n\n🏆 **View tournaments** - See all available tournaments\n💳 **Register for tournaments** - Complete registration with payment\n📱 **Generate payment QR** - Get UPI payment codes instantly\n🎯 **Book slots automatically** - Confirm your tournament spot\n\nWhat would you like to do today? You can ask me to show tournaments, help you register, or answer any questions!",
+      content: "Hi! I'm your BGMI tournament assistant with full platform access. I can help you:\n\n🏆 **View tournaments** - Check available tournaments\n💳 **Register for tournaments** - Complete registration with payment\n📱 **Generate payment QR** - Get UPI payment codes instantly\n🎯 **Book slots automatically** - Confirm your tournament spot\n\nWhat would you like to do today? Ask me to show tournaments, help you register, or ask any questions!\n\n*Note: If no tournaments are currently available, I'll let you know and guide you on creating new ones.*",
       isUser: false,
       timestamp: new Date(),
       type: 'text'

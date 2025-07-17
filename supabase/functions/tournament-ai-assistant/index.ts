@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -50,10 +51,10 @@ serve(async (req) => {
       .order('start_date', { ascending: true })
       .limit(5);
 
-    const tournamentContext = tournaments ? 
+    const tournamentContext = tournaments && tournaments.length > 0 ? 
       `Available upcoming tournaments:\n${tournaments.map(t => 
         `- ${t.title} (ID: ${t.id})\n  Entry Fee: ₹${t.entry_fee}\n  Prize Pool: ₹${t.prize_pool}\n  Max Players: ${t.max_players}\n  Current Players: ${t.current_players}\n  Start Date: ${new Date(t.start_date).toLocaleDateString()}\n  Type: ${t.tournament_type}\n`
-      ).join('\n')}` : 'No upcoming tournaments available.';
+      ).join('\n')}` : 'No upcoming tournaments are currently available. Users can create tournaments or wait for organizers to create new ones.';
 
     const systemPrompt = `You are a professional BGMI (PUBG Mobile) tournament assistant with FULL ACCESS to the tournament platform. You can help users with:
 
@@ -68,13 +69,21 @@ IMPORTANT CAPABILITIES:
 - You can generate UPI payment QR codes
 - You can book tournament slots automatically
 
-REGISTRATION WORKFLOW:
+CURRENT STATUS: ${tournaments && tournaments.length > 0 ? `There are ${tournaments.length} upcoming tournaments available.` : 'No tournaments are currently available.'}
+
+REGISTRATION WORKFLOW (only when tournaments are available):
 When a user wants to register for a tournament:
-1. Ask for tournament preference (show available tournaments)
+1. Show available tournaments if any exist
 2. Collect team details (team name, player names, in-game IDs)
 3. Confirm entry fee and tournament details
 4. Generate payment QR code
 5. After payment confirmation, book the slot automatically
+
+IMPORTANT: If no tournaments are available, inform users that:
+- No tournaments are currently scheduled
+- They can create their own tournament using the platform
+- They should check back later for new tournaments
+- Tournament organizers can create tournaments at any time
 
 Current tournament data:
 ${tournamentContext}
@@ -84,6 +93,7 @@ RESPONSE FORMAT:
 - Always confirm details before processing payments
 - Provide clear step-by-step guidance
 - Use structured responses for complex actions
+- If no tournaments exist, don't show tournament selection options
 
 Context: ${context || 'General tournament assistance'}`;
 
@@ -124,9 +134,13 @@ Context: ${context || 'General tournament assistance'}`;
 
     const aiResponse = data.candidates[0].content.parts[0].text;
 
+    // Only include tournaments in response if they exist and user asks for them
+    const shouldShowTournaments = tournaments && tournaments.length > 0 && 
+      (message.toLowerCase().includes('tournament') || message.toLowerCase().includes('show') || message.toLowerCase().includes('register'));
+
     return new Response(JSON.stringify({ 
       response: aiResponse,
-      tournaments: tournaments || [],
+      tournaments: shouldShowTournaments ? tournaments : [],
       timestamp: new Date().toISOString()
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
