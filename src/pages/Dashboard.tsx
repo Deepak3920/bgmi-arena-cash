@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase, Tournament } from '@/lib/supabase'
 import { useToast } from '@/hooks/use-toast'
@@ -14,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, Filter, Trophy, Zap, Clock, TrendingUp, Bot } from 'lucide-react'
 
 const Dashboard = () => {
+  const navigate = useNavigate()
   const { user, loading: authLoading } = useAuth()
   const { toast } = useToast()
   const [tournaments, setTournaments] = useState<Tournament[]>([])
@@ -340,7 +342,7 @@ const Dashboard = () => {
             </p>
             {!searchTerm && (
               <Button 
-                onClick={() => window.location.href = '/create-tournament'}
+                onClick={() => navigate('/create')}
                 className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary/90 hover:to-secondary/90 transition-all duration-300"
               >
                 <Trophy className="h-4 w-4 mr-2" />
