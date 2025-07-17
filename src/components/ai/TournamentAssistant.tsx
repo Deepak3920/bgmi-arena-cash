@@ -132,10 +132,65 @@ const TournamentAssistant: React.FC = () => {
     }
   }
 
-  const handleTournamentSelect = (tournament: Tournament) => {
+  const handleTournamentSelect = async (tournament: Tournament) => {
     setSelectedTournament(tournament)
-    const message = `I want to register for "${tournament.title}" tournament. The entry fee is ₹${tournament.entry_fee}.`
-    setInput(message)
+    
+    // Directly proceed to payment without asking for team details
+    setIsLoading(true)
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('tournament-ai-assistant', {
+        body: { 
+          action: 'register_tournament',
+          tournamentId: tournament.id,
+          teamDetails: {
+            teamName: `${user?.email?.split('@')[0] || 'Player'}'s Team`,
+            teamMembers: [user?.email || 'player@email.com']
+          },
+          userId: user?.id
+        },
+      })
+
+      if (error) throw error
+
+      // Add confirmation message
+      const confirmMessage: Message = {
+        id: Date.now().toString(),
+        content: `Proceeding with registration for "${tournament.title}" (Entry Fee: ₹${tournament.entry_fee})`,
+        isUser: false,
+        timestamp: new Date(),
+        type: 'text'
+      }
+      setMessages(prev => [...prev, confirmMessage])
+
+      // Handle payment QR response
+      if (data.action === 'registration_created' && data.paymentQR) {
+        const paymentMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: `Payment Required for ${data.tournament.title}`,
+          isUser: false,
+          timestamp: new Date(),
+          type: 'payment_qr',
+          data: {
+            tournament: data.tournament,
+            paymentQR: data.paymentQR,
+            upiString: data.upiString,
+            registration: data.registration
+          }
+        }
+        setMessages(prev => [...prev, paymentMessage])
+      }
+
+    } catch (error: any) {
+      console.error('Error during registration:', error)
+      toast({
+        title: "Registration Error",
+        description: error.message || "Failed to proceed with registration. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const confirmPayment = async (registrationData: any) => {
