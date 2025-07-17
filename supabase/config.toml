@@ -1,1 +1,7 @@
 project_id = "khffmkbqvcppybpdrusi"
+
+[functions.tournament-ai-assistant]
+verify_jwt = false
+
+[functions.confirm-payment]
+verify_jwt = false
