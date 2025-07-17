@@ -41,6 +41,7 @@ const Dashboard = () => {
       if (error) throw error
       setTournaments(data || [])
     } catch (error: any) {
+      console.error('Error fetching tournaments:', error)
       toast({
         title: "Error",
         description: "Failed to fetch tournaments",
@@ -334,9 +335,18 @@ const Dashboard = () => {
           <div className="text-center py-16">
             <Trophy className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">No tournaments found</h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-6">
               {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create a tournament!'}
             </p>
+            {!searchTerm && (
+              <Button 
+                onClick={() => window.location.href = '/create-tournament'}
+                className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary/90 hover:to-secondary/90 transition-all duration-300"
+              >
+                <Trophy className="h-4 w-4 mr-2" />
+                Create Tournament
+              </Button>
+            )}
           </div>
         )}
       </div>
