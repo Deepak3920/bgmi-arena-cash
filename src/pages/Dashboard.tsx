@@ -16,7 +16,7 @@ import { Search, Filter, Trophy, Zap, Clock, TrendingUp, Bot } from 'lucide-reac
 
 const Dashboard = () => {
   const navigate = useNavigate()
-  const { user, loading: authLoading } = useAuth()
+  const { user, profile, loading: authLoading } = useAuth()
   const { toast } = useToast()
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [loading, setLoading] = useState(true)
@@ -340,7 +340,7 @@ const Dashboard = () => {
             <p className="text-muted-foreground mb-6">
               {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create a tournament!'}
             </p>
-            {!searchTerm && (
+            {!searchTerm && profile?.user_type === 'organizer' && (
               <Button 
                 onClick={() => navigate('/create')}
                 className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary/90 hover:to-secondary/90 transition-all duration-300"

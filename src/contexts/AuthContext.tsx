@@ -15,6 +15,9 @@ interface UserProfile {
   avatar_url?: string
   created_at: string
   updated_at: string
+  user_type: 'organizer' | 'team'
+  organizer_code?: string
+  linked_organizer_id?: string
 }
 
 interface AuthContextType {
@@ -22,7 +25,7 @@ interface AuthContextType {
   session: Session | null
   profile: UserProfile | null
   loading: boolean
-  signUp: (email: string, password: string, username: string, inGameName: string) => Promise<void>
+  signUp: (email: string, password: string, username: string, inGameName: string, userType: 'organizer' | 'team', organizerCode?: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
@@ -95,9 +98,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const signUp = async (email: string, password: string, username: string, inGameName: string) => {
+  const signUp = async (email: string, password: string, username: string, inGameName: string, userType: 'organizer' | 'team', organizerCode?: string) => {
     try {
       setLoading(true)
+
+      // If signing up as team, verify organizer code exists
+      let linkedOrganizerId = null
+      if (userType === 'team') {
+        if (!organizerCode) {
+          throw new Error('Organizer code is required for team registration')
+        }
+
+        const { data: organizer, error: orgError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('organizer_code', organizerCode)
+          .eq('user_type', 'organizer')
+          .maybeSingle()
+
+        if (orgError || !organizer) {
+          throw new Error('Invalid organizer code')
+        }
+
+        linkedOrganizerId = organizer.id
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -112,6 +137,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error
 
       if (data.user) {
+        // Generate organizer code for organizers
+        let generatedOrganizerCode = null
+        if (userType === 'organizer') {
+          generatedOrganizerCode = Math.floor(1000 + Math.random() * 9000).toString()
+        }
+
         // Create profile
         const { error: profileError } = await supabase
           .from('profiles' as any)
@@ -125,11 +156,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               wins: 0,
               total_matches: 0,
               earnings: 0,
+              user_type: userType,
+              organizer_code: generatedOrganizerCode,
+              linked_organizer_id: linkedOrganizerId,
             },
           ])
 
         if (profileError) {
           console.error('Error creating profile:', profileError)
+          throw profileError
         }
       }
 

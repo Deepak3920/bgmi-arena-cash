@@ -5,8 +5,9 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAuth } from '@/contexts/AuthContext'
-import { Gamepad2, Shield, Zap } from 'lucide-react'
+import { Gamepad2, Shield, Zap, Users, Crown } from 'lucide-react'
 
 const LoginForm = () => {
   const { signIn, signUp, signInWithGoogle, loading } = useAuth()
@@ -15,12 +16,22 @@ const LoginForm = () => {
     password: '',
     username: '',
     inGameName: '',
+    userType: 'team' as 'organizer' | 'team',
+    organizerCode: '',
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleUserTypeChange = (value: 'organizer' | 'team') => {
+    setFormData({
+      ...formData,
+      userType: value,
+      organizerCode: '', // Reset organizer code when switching types
     })
   }
 
@@ -36,7 +47,14 @@ const LoginForm = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await signUp(formData.email, formData.password, formData.username, formData.inGameName)
+      await signUp(
+        formData.email, 
+        formData.password, 
+        formData.username, 
+        formData.inGameName,
+        formData.userType,
+        formData.userType === 'team' ? formData.organizerCode : undefined
+      )
     } catch (error) {
       // Error is handled in AuthContext
     }
@@ -167,6 +185,46 @@ const LoginForm = () => {
                 </div>
                 
                 <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="profile-type">Profile Type</Label>
+                  <Select value={formData.userType} onValueChange={handleUserTypeChange}>
+                    <SelectTrigger className="bg-input border-border focus:border-primary transition-colors">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="team">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          Team Player
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="organizer">
+                        <div className="flex items-center gap-2">
+                          <Crown className="h-4 w-4" />
+                          Tournament Organizer
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {formData.userType === 'team' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="organizer-code">Organizer Code</Label>
+                    <Input
+                      id="organizer-code"
+                      name="organizerCode"
+                      type="text"
+                      placeholder="Enter 4-digit organizer code"
+                      value={formData.organizerCode}
+                      onChange={handleInputChange}
+                      maxLength={4}
+                      required
+                      className="bg-input border-border focus:border-primary transition-colors"
+                    />
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="signup-username">Username</Label>
                   <Input

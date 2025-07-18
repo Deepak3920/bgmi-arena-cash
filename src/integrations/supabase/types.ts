@@ -23,8 +23,11 @@ export type Database = {
           id: string
           in_game_name: string
           level: number
+          linked_organizer_id: string | null
+          organizer_code: string | null
           total_matches: number
           updated_at: string
+          user_type: string
           username: string
           wins: number
         }
@@ -36,8 +39,11 @@ export type Database = {
           id: string
           in_game_name: string
           level?: number
+          linked_organizer_id?: string | null
+          organizer_code?: string | null
           total_matches?: number
           updated_at?: string
+          user_type?: string
           username: string
           wins?: number
         }
@@ -49,12 +55,23 @@ export type Database = {
           id?: string
           in_game_name?: string
           level?: number
+          linked_organizer_id?: string | null
+          organizer_code?: string | null
           total_matches?: number
           updated_at?: string
+          user_type?: string
           username?: string
           wins?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_linked_organizer_id_fkey"
+            columns: ["linked_organizer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tournament_registrations: {
         Row: {
