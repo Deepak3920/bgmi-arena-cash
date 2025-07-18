@@ -56,6 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null)
       if (session?.user) {
         loadUserProfile(session.user.id)
+      } else {
+        setProfile(null)
       }
       setLoading(false)
     })

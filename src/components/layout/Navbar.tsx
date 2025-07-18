@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/contexts/AuthContext'
+import { supabase } from '@/integrations/supabase/client'
 import { Gamepad2, Trophy, Plus, User, LogOut, Coins } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -19,6 +20,14 @@ const Navbar = () => {
   const handleSignOut = async () => {
     await signOut()
     navigate('/')
+  }
+
+  const clearSession = async () => {
+    // Force clear all local storage and sign out
+    localStorage.clear()
+    sessionStorage.clear()
+    await supabase.auth.signOut()
+    window.location.href = '/login'
   }
 
   return (
@@ -105,6 +114,10 @@ const Navbar = () => {
                   <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={clearSession} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Clear Session
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
