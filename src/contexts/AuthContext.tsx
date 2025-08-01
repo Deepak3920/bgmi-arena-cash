@@ -201,9 +201,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: "You have successfully signed in.",
       })
     } catch (error: any) {
+      let errorMessage = error.message
+      let errorTitle = "Error"
+      
+      if (error.message?.includes('Email not confirmed')) {
+        errorTitle = "Email Confirmation Required"
+        errorMessage = "Please check your email and click the confirmation link before signing in. Check your spam folder if you don't see the email."
+      }
+      
       toast({
-        title: "Error",
-        description: error.message,
+        title: errorTitle,
+        description: errorMessage,
         variant: "destructive",
       })
       throw error
