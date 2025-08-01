@@ -4,6 +4,7 @@ import ProtectedRoute from './ProtectedRoute'
 import Dashboard from '@/pages/Dashboard'
 import Login from '@/pages/Login'
 import CreateTournament from '@/pages/CreateTournament'
+import Profile from '@/pages/Profile'
 import NotFound from '@/pages/NotFound'
 
 const AppRoutes = () => {
@@ -40,6 +41,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <CreateTournament />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/profile" 
+        element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         } 
       />

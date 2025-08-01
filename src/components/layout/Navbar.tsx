@@ -80,6 +80,15 @@ const Navbar = () => {
                 <span className="text-sm font-medium text-warning">₹{profile.earnings}</span>
               </div>
 
+              {/* Profile Name - Clickable */}
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/profile')}
+                className="hidden md:flex items-center gap-2 hover:bg-muted/50 px-3 py-2 h-auto"
+              >
+                <span className="text-sm font-medium">{profile.username}</span>
+              </Button>
+
               {/* User Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
