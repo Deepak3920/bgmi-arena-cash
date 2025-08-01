@@ -14,7 +14,6 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/', label: 'Tournaments', icon: Trophy },
-    { path: '/create', label: 'Create', icon: Plus },
   ]
 
   const handleSignOut = async () => {

@@ -3,19 +3,24 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tournament } from '@/lib/supabase'
-import { Calendar, Users, Trophy, MapPin, Clock } from 'lucide-react'
+import { Calendar, Users, Trophy, MapPin, Clock, Edit, MoreVertical } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface TournamentCardProps {
   tournament: Tournament
   onJoin: (tournamentId: string) => void
+  onEdit?: (tournamentId: string) => void
   isRegistered?: boolean
 }
 
 const TournamentCard: React.FC<TournamentCardProps> = ({ 
   tournament, 
   onJoin, 
+  onEdit,
   isRegistered = false 
 }) => {
+  const { user } = useAuth()
   const getStatusColor = (status: Tournament['status']) => {
     switch (status) {
       case 'upcoming':
@@ -39,17 +44,35 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   }
 
   const spotsLeft = tournament.max_players - tournament.current_players
+  const canEdit = user?.id === tournament.organizer_id && onEdit
 
   return (
     <Card className="bg-gradient-to-br from-card via-card to-muted/20 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <CardTitle className="text-lg font-bold text-foreground line-clamp-1">
+          <CardTitle className="text-lg font-bold text-foreground line-clamp-1 flex-1 mr-2">
             {tournament.title}
           </CardTitle>
-          <Badge className={getStatusColor(tournament.status)}>
-            {tournament.status}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge className={getStatusColor(tournament.status)}>
+              {tournament.status}
+            </Badge>
+            {canEdit && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => onEdit!(tournament.id)} className="cursor-pointer">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Tournament
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2">
           {tournament.description || 'No description available'}

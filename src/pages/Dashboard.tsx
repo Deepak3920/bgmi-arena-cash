@@ -25,6 +25,10 @@ const Dashboard = () => {
   const [filterStatus, setFilterStatus] = useState('all')
   const [registeredTournaments, setRegisteredTournaments] = useState<string[]>([])
 
+  const handleEditTournament = (tournamentId: string) => {
+    navigate(`/create?edit=${tournamentId}`)
+  }
+
   useEffect(() => {
     fetchTournaments()
     if (user) {
@@ -271,6 +275,18 @@ const Dashboard = () => {
           </Dialog>
         </div>
 
+        {/* Create Tournament Button - Centered */}
+        <div className="text-center mb-8">
+          <Button 
+            onClick={() => navigate('/create')}
+            size="lg"
+            className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary/90 hover:to-secondary/90 transition-all duration-300 shadow-xl px-8 py-3"
+          >
+            <Trophy className="h-5 w-5 mr-2" />
+            Create Tournament
+          </Button>
+        </div>
+
         {/* Tournament Tabs */}
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
@@ -280,13 +296,14 @@ const Dashboard = () => {
             <TabsTrigger value="my">My Tournaments</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all" className="mt-6">
+           <TabsContent value="all" className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTournaments.map((tournament) => (
                 <TournamentCard
                   key={tournament.id}
                   tournament={tournament}
                   onJoin={handleJoinTournament}
+                  onEdit={handleEditTournament}
                   isRegistered={registeredTournaments.includes(tournament.id)}
                 />
               ))}
@@ -300,6 +317,7 @@ const Dashboard = () => {
                   key={tournament.id}
                   tournament={tournament}
                   onJoin={handleJoinTournament}
+                  onEdit={handleEditTournament}
                   isRegistered={registeredTournaments.includes(tournament.id)}
                 />
               ))}
@@ -313,6 +331,7 @@ const Dashboard = () => {
                   key={tournament.id}
                   tournament={tournament}
                   onJoin={handleJoinTournament}
+                  onEdit={handleEditTournament}
                   isRegistered={registeredTournaments.includes(tournament.id)}
                 />
               ))}
@@ -326,6 +345,7 @@ const Dashboard = () => {
                   key={tournament.id}
                   tournament={tournament}
                   onJoin={handleJoinTournament}
+                  onEdit={handleEditTournament}
                   isRegistered={true}
                 />
               ))}
@@ -340,15 +360,6 @@ const Dashboard = () => {
             <p className="text-muted-foreground mb-6">
               {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create a tournament!'}
             </p>
-            {!searchTerm && profile?.user_type === 'organizer' && (
-              <Button 
-                onClick={() => navigate('/create')}
-                className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary/90 hover:to-secondary/90 transition-all duration-300"
-              >
-                <Trophy className="h-4 w-4 mr-2" />
-                Create Tournament
-              </Button>
-            )}
           </div>
         )}
       </div>
