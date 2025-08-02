@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      kv_store_8f226d94: {
+        Row: {
+          key: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
